@@ -2,8 +2,9 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http, {path: '/io'});
-var loki = require('lokijs');
-var db = new loki('storage.json');
+var Loki = require('lokijs');
+var db = new Loki('./db/storage.json');
+
 var messages;
 
 db.loadDatabase({},function(){
@@ -24,11 +25,11 @@ var z = {
 		console.log('user connected');
 		var msgs = messages.data;//.map(function(a){return [a.source, a.message, a.timestamp];});
 		z.sendinfo(msgs);
-		socket.on('refresh', z.sendinfo);		
+		//socket.on('refresh', z.sendinfo);		
+		socket.on('disconnect', function(){console.log('lost client');});
 	},
 	
 	sendinfo: function(msg){
-    		console.log('message: ' + msg);
 			io.emit('showinfo',msg);		
 	},
 	
@@ -47,6 +48,8 @@ app.get('/persist', function(req, res){
   	z.sendinfo([{message: req.query.msg, source: req.query.src, timestamp: new Date()}]);
   	res.sendStatus(200);
 });
+
+app.use('/db', function(req,res){res.sendStatus(403);});
 
 http.listen(process.env.PORT, function(){ console.log('Listening on ' + process.env.PORT); });
 
