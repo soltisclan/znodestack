@@ -24,13 +24,16 @@ var z = {
 	connect: function(socket){
 		console.log('user connected');
 		var msgs = messages.data;//.map(function(a){return [a.source, a.message, a.timestamp];});
-		z.sendinfo(msgs);
+		z.sendinfo(socket, msgs);
 		//socket.on('refresh', z.sendinfo);		
 		socket.on('disconnect', function(){console.log('lost client');});
 	},
 	
-	sendinfo: function(msg){
-			io.emit('showinfo',msg);		
+	sendinfo: function(socket, msg){
+		if (!socket){
+			socket = io;
+		}
+		socket.emit('showinfo',msg);		
 	},
 	
 	persist: function(src, msg){
@@ -45,7 +48,7 @@ app.use('/', express.static('client'));
 
 app.get('/persist', function(req, res){
 	z.persist(req.query.src, req.query.msg);
-  	z.sendinfo([{message: req.query.msg, source: req.query.src, timestamp: new Date()}]);
+  	z.sendinfo(null,[{message: req.query.msg, source: req.query.src, timestamp: new Date()}]);
   	res.sendStatus(200);
 });
 
