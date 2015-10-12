@@ -1,0 +1,20 @@
+{
+	"version": "0.0.1",
+	// List of configurations. Add new configurations or edit existing ones.
+	// ONLY "node" and "mono" are supported, change "type" to switch.
+	"configurations": [
+		{
+			// Name of configuration; appears in the launch configuration drop down menu.
+			"name": "Debug",
+			// Type of configuration. Possible values: "node", "mono".
+			"type": "node",
+			// Workspace relative or absolute path to the program.
+			"program": "./server.js",
+			// Automatically stop program after launch.
+			"stopOnEntry": false,
+			"env": {
+				"PORT": "8080"
+			}
+		}
+	]
+}
